@@ -1,0 +1,199 @@
+<?php
+
+use Fpdf\Fpdf;
+
+class PDF extends FPDF
+{
+ // Fungsi Header
+ function Header()
+ {
+  $this->SetLineWidth(0.5); // Lebar garis
+  $this->SetFont('arial', '', 10);
+  $this->Cell(0, 10, 'Page :  ' . $this->PageNo(), 0, 0, 'R');
+  $this->ln(5);
+  $this->Cell(0, 10, 'Tanggal: ' . date('Y/m/d'), 0, 1, 'R'); // Menampilkan tanggal dengan format dd/mm/yyyy
+  $this->SetFont('Arial', 'B', 20);
+  $this->Cell(0, 7, 'Ujikom', 0, 1, 'L');
+  $this->Line(10, 32, 200, 32); // Menggambar garis horizontal
+  $this->Line(10, 33, 200, 33); // Menggambar garis horizontal
+  $this->Ln(5); // Spasi antara judul dan isi
+ }
+
+ // Fungsi Footer
+ function Footer()
+ {
+  $this->SetY(-15); // Posisi 15 mm dari bawah
+  $this->SetFont('Arial', 'I', 8);
+  $this->Cell(0, 10, 'Halaman ' . $this->PageNo(), 0, 0, 'R');
+  $this->ln(3);
+  $this->Cell(0, 10, 'Tanggal: ' . date('d/m/Y'), 0, 1, 'R');
+  // Kode Footer (tidak diubah)
+ }
+}
+
+$pdf = new PDF('P', 'mm', 'A4'); // 'P' untuk orientasi Potrait, ukuran dalam milimeter (80 mm x 150 mm)
+$pdf->AddPage();
+
+$pdf->SetFont('Arial', '', 8);
+$pdf->Cell(30, 5, "Jenis Laporan", 0, 0, 'L');
+$pdf->Cell(3, 5, ":", 0, 0, 'R');
+$pdf->Cell(60, 5, "Laporan Transaksi", 0, 0, 'L');
+$pdf->Ln();
+$pdf->Cell(30, 5, "Format", 0, 0, 'L');
+$pdf->Cell(3, 5, ":", 0, 0, 'R');
+
+// var_dump($format); exit;
+
+switch ($format) {
+ case "":
+  $pdf->Cell(60, 5, " - ", 0, 0, 'L');
+  break;
+ case "harian":
+  $pdf->Cell(60, 5, "Harian", 0, 0, 'L');
+  $pdf->Ln();
+  $pdf->Cell(30, 5, "Tanggal", 0, 0, 'L');
+  $pdf->Cell(3, 5, ":", 0, 0, 'R');
+  $pdf->Cell(60, 5, $harian, 0, 0, 'L');
+  break;
+ case "bulanan":
+  $pdf->Cell(60, 5, "Bulanan", 0, 0, 'L');
+  $pdf->Ln();
+  $pdf->Cell(30, 5, "Bulan", 0, 0, 'L');
+  $pdf->Cell(3, 5, ":", 0, 0, 'R');
+  $pdf->Cell(60, 5, $bulanan, 0, 0, 'L');
+  break;
+ case "Tahunan":
+  $pdf->Cell(60, 5, "Tahunan", 0, 0, 'L');
+  $pdf->Ln();
+  $pdf->Cell(30, 5, "Tahun", 0, 0, 'L');
+  $pdf->Cell(3, 5, ":", 0, 0, 'R');
+  $pdf->Cell(60, 5, $tahunan, 0, 0, 'L');
+  break;
+ case "rentang_tanggal":
+  $pdf->Cell(60, 5, "Rentang Tanggal", 0, 0, 'L');
+  $pdf->Ln();
+  $pdf->Cell(30, 5, "Tanggal s.d Tanggal", 0, 0, 'L');
+  $pdf->Cell(3, 5, ":", 0, 0, 'R');
+  $pdf->Cell(60, 5, $dari .' s.d '. $sampai, 0, 0, 'L');
+  break;
+ default:
+  break;
+}
+if($kasir_name == ''){
+
+}else{
+$pdf->Ln();
+$pdf->Cell(30, 5, "Kasir", 0, 0, 'L');
+$pdf->Cell(3, 5, ":", 0, 0, 'R');
+$pdf->Cell(60, 5, $kasir_name, 0, 0, 'L');
+
+}
+
+if($trans == ''){
+
+}else{
+$pdf->Ln();
+$pdf->Cell(30, 5, "Transaksi no", 0, 0, 'L');
+$pdf->Cell(3, 5, ":", 0, 0, 'R');
+$pdf->Cell(60, 5, $trans, 0, 0, 'L');
+
+}
+$pdf->Ln(3);
+
+
+// if (($nama_kasir != 0) || ($nama_kasir != '')){
+//     $pdf->Cell(60,5,$nama_kasir,0,0,'L');
+// }else{
+// }
+$pdf->Cell(0, 5,'_________________________________________________________________________________________________________________________',0,0); // Koordinat y = 50, x dari 10 ke lebar halaman - 10$pdf->Ln(10); // Menggambar garis horizontal
+
+// var_dump($sampai,$dari);
+// die;
+$pdf->Ln(10);
+// if($dari == $sampai && $dari != null){
+//     $pdf->Cell(190,5,"Tanggal : ". date('Y-m-d', strtotime($dari)),0,0,'C');
+//     $pdf->Ln(10);
+// }elseif($dari && $sampai){
+//     $pdf->Cell(190,5,"Tanggal : ". date('Y-m-d', strtotime($dari)). ' s.d '. date('Y-m-d', strtotime($sampai)),0,0,'C');
+//     $pdf->Ln(10);
+// }elseif(($dari != 0) || ($dari != null)){
+//     $pdf->Cell(190,5,"Tanggal : ". date('Y-m-d', strtotime($dari)),0,0,'C');
+//     $pdf->Ln(10);
+// }elseif(($sampai != 0) || ($sampai != null)){
+//     $pdf->Cell(190,5,"Tanggal : ". date('Y-m-d', strtotime($sampai)),0,0,'C');
+//     $pdf->Ln(10);
+// }else{
+//     $pdf->Cell(190,5,"Tanggal : Semua",0,0,'C');
+//     $pdf->Ln(10); 
+// }
+// Gunakan data yang diambil
+$pdf->Cell(8, 6, 'No', 1, 0, 'C');
+$pdf->Cell(27, 6, 'Nama Kasir', 1, 0, 'C');
+$pdf->Cell(32, 6, 'Nama Produk', 1, 0, 'C');
+$pdf->Cell(8, 6, 'Qty', 1, 0, 'C');
+$pdf->Cell(25, 6, 'Harga', 1, 0, 'C');
+$pdf->Cell(25, 6, 'Sub Total', 1, 0, 'C');
+$pdf->Cell(11, 6, 'Diskon', 1, 0, 'C');
+$pdf->Cell(25, 6, 'Total', 1, 0, 'C');
+$pdf->Cell(29, 6, 'Tanggal', 1, 0, 'C');
+$pdf->ln();
+
+
+// $data = $result["trans_id"];
+
+$dari_sampai = '';
+// $data = "ahai";
+$no = 1;
+$total_semua = 0;
+// var_dump($result[20]); exit;
+foreach ($result as $data) {
+
+ $pdf->Cell(8, 6, $data['trans_id'], 1, 0, 'C');
+ $pdf->Cell(27, 6, $data['nama_kasir'], 1, 0, 'C');
+ $prod_nama = $data['nama_produk'];
+ $pdf->Cell(32, 6, $prod_nama, 1, 0, 'L');
+ $qty =  $data['qty'];
+ $pdf->Cell(8, 6, $qty, 1, 0, 'R');
+ $harga = $data['harga'];
+ $pdf->Cell(25, 6, 'Rp. ' . formatRupiah($harga), 1, 0, 'R');
+ $sub_total = $data['sub_total'];
+ $pdf->Cell(25, 6, 'Rp. ' . formatRupiah($sub_total), 1, 0, 'R');
+ if (is_numeric($data['diskon'])) {
+  $diskon = $data['diskon'] * 100 . "%";
+ } else {
+  // Handle jika nilai diskon tidak numerik
+  $diskon = $data['diskon'];
+ }
+ $pdf->Cell(11, 6, $diskon, 1, 0, 'R');
+
+ $total = $data['total'];
+ $pdf->Cell(25, 6, 'Rp. ' . formatRupiah($total), 1, 0, 'R');
+ $tanggal = date('Y/m/d   -  H:i', strtotime($data['tanggal']));;
+ $pdf->Cell(29, 6, $tanggal, 1, 0, '');
+ $total_semua += $total;
+ $pdf->Ln();
+}
+
+$pdf->Cell(15, 6, 'Total : ', 1, 0, 'L');
+$pdf->Cell(175, 6, 'Rp. ' . formatRupiah($total_semua), 1, 0, 'R');
+
+
+
+
+
+$pdf->Output();
+
+function formatRupiah($angka)
+{
+ $number = preg_replace("/[^0-9]/", "", $angka);
+ $split = str_split($number);
+ $length = count($split);
+ $rupiah = '';
+ for ($i = 0; $i < $length; $i++) {
+  if (($length - $i) % 3 == 0 && $i != 0) {
+   $rupiah .= '.';
+  }
+  $rupiah .= $split[$i];
+ }
+ return $rupiah;
+}

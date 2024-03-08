@@ -1,0 +1,104 @@
+<?php  
+
+use Fpdf\Fpdf;
+
+$pdf = new FPDF('P', 'mm', array(80, 150)); // 'P' untuk orientasi Potrait, ukuran dalam milimeter (80 mm x 150 mm)
+$pdf->AddPage();
+
+
+
+$no_struk = $struk['transaksi_id'];
+$tanggal = $struk['transaksi_tanggal'];
+$nama_kasir = $struk['nama'];
+$kode_kasir = $struk['kode'];
+$produk = $struk['produk_data'];
+$kode_voucher = $struk['kode_voucher'];
+$diskon_voucher = $struk['diskon_voucher'] * 100 .'%';
+$potongan_voucher = $struk['potongan_voucher'];
+$total = $struk['total'];
+$tunai = $struk['tunai'];
+$kembali = $struk['kembali'];
+
+
+// Gunakan data yang diambil
+$pdf->SetFont('Courier','B',10);
+$pdf->Cell(60,10,"Tahura Cafe",0,0,'C');
+$pdf->Ln(3);
+$pdf->SetFont('Courier','',6);
+$pdf->Cell(60,10,"------------------------",0,0,'C');
+$pdf->Ln(5);
+// $pdf->Cell(30,10,,0,0,'R');
+$pdf->SetFont('Courier','',6);
+$pdf->Cell(60,10,"No Struk : ".$no_struk,0,0,'C');
+$pdf->Ln(5);
+
+$pdf->Cell(30,10,$nama_kasir,0,0,'L');
+$pdf->Cell(30,10,$tanggal,0,0,'R');
+$pdf->Ln(3);
+$pdf->Cell(60,10,"----------------------------------------------",0,0,'C');
+$pdf->Ln(3);
+$pdf->Cell(20,10,'Produk',0,0,'L');
+$pdf->Cell(10,10,'Qty',0,0,'R');
+$pdf->Cell(15,10,'Harga',0,0,'R');
+$pdf->Cell(15,10,'Total',0,0,'R');
+$pdf->Ln(3);
+$pdf->Cell(60,10,"----------------------------------------------",0,0,'C');
+$pdf->Ln(3);
+foreach($produk as $item){
+    $produk_nama = $item['nama'];
+    $pdf->Cell(20,10, $produk_nama,0,0,'L');
+    $qty = $item['qty'];
+    $pdf->Cell(10,10, $qty,0,0,'R');
+    $harga = $item['harga'];
+    $pdf->Cell(15,10,formatRupiah($harga),0,0,'R');
+    $sub_total = $item['subtotal'];
+    $pdf->Cell(15,10, formatRupiah($sub_total),0,0,'R');
+    $pdf->Ln(3);
+}
+
+$pdf->Cell(60,10,"----------------------------------------------",0,0,'C');
+$pdf->Ln(3);
+if($potongan_voucher != 0 && $potongan_voucher != ''){
+    $pdf->Cell(17,10,'Voucher',0,0,'L');
+    $pdf->Cell(3,10,':',0,0,'L');
+    $pdf->Cell(40,10,$kode_voucher,0,0,'R');
+    $pdf->Ln(3);
+    $pdf->Cell(17,10,'diskon',0,0,'L');
+    $pdf->Cell(3,10,':',0,0,'L');
+    $pdf->Cell(40,10,$diskon_voucher,0,0,'R');
+    $pdf->Ln(3);
+    $pdf->Cell(17,10,'Potongan',0,0,'L');
+    $pdf->Cell(3,10,':',0,0,'L');
+    $pdf->Cell(40,10,formatRupiah($potongan_voucher),0,0,'R');
+    $pdf->Ln(3);
+    $pdf->Cell(60,10,"----------------------------------------------",0,0,'C');
+    $pdf->Ln(3);
+}
+$pdf->Cell(17,10,'Total',0,0,'L');
+$pdf->Cell(3,10,':',0,0,'L');
+$pdf->Cell(40,10,formatRupiah($total),0,0,'R');
+$pdf->Ln(3);
+$pdf->Cell(17,10,'Tunai',0,0,'L');
+$pdf->Cell(3,10,':',0,0,'L');
+$pdf->Cell(40,10,formatRupiah($tunai),0,0,'R');
+$pdf->Ln(3);
+$pdf->Cell(17,10,'Kembali',0,0,'L');
+$pdf->Cell(3,10,':',0,0,'L');
+$pdf->Cell(40,10,formatRupiah($kembali),0,0,'R');
+$pdf->Ln(3); 
+
+$pdf->Output();
+
+function formatRupiah($angka) {
+    $number = preg_replace("/[^0-9]/", "", $angka);
+    $split = str_split($number);
+    $length = count($split);
+    $rupiah = '';
+    for ($i = 0; $i < $length; $i++) {
+        if (($length - $i) % 3 == 0 && $i != 0) {
+            $rupiah .= '.';
+        }
+        $rupiah .= $split[$i];
+    }
+    return $rupiah;
+}
